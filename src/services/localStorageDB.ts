@@ -12,33 +12,36 @@ export interface ChatHistory {
 }
 
 class LocalStorageDB {
-  private readonly SESSIONS_KEY = 'interview_sessions';
-  private readonly CHAT_HISTORY_KEY = 'chat_history';
+  private readonly baseUrl = 'http://localhost:8000/api';
 
   // Chat History Methods
-  saveChatHistory(chatHistory: ChatHistory): void {
+  async saveChatHistory(chatHistory: ChatHistory): Promise<void> {
     try {
-      const histories = this.getAllChatHistories();
-      const existingIndex = histories.findIndex(h => h.id === chatHistory.id);
-      
-      if (existingIndex >= 0) {
-        histories[existingIndex] = chatHistory;
-      } else {
-        histories.push(chatHistory);
+      const response = await fetch(`${this.baseUrl}/chat-history`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(chatHistory),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to save chat history: ${response.status}`);
       }
-      
-      localStorage.setItem(this.CHAT_HISTORY_KEY, JSON.stringify(histories));
     } catch (error) {
       console.error('Failed to save chat history:', error);
     }
   }
 
-  getAllChatHistories(): ChatHistory[] {
+  async getAllChatHistories(): Promise<ChatHistory[]> {
     try {
-      const data = localStorage.getItem(this.CHAT_HISTORY_KEY);
-      if (!data) return [];
-      
-      return JSON.parse(data).map((history: any) => ({
+      const response = await fetch(`${this.baseUrl}/chat-history`);
+      if (!response.ok) {
+        throw new Error(`Failed to load chat histories: ${response.status}`);
+      }
+
+      const data = await response.json();
+      return data.map((history: any) => ({
         ...history,
         createdAt: new Date(history.createdAt),
         messages: history.messages.map((msg: any) => ({
@@ -52,36 +55,53 @@ class LocalStorageDB {
     }
   }
 
-  getChatHistory(id: string): ChatHistory | null {
-    const histories = this.getAllChatHistories();
+  async getChatHistory(id: string): Promise<ChatHistory | null> {
+    const histories = await this.getAllChatHistories();
     return histories.find(h => h.id === id) || null;
   }
 
-  deleteChatHistory(id: string): void {
+  async deleteChatHistory(id: string): Promise<void> {
     try {
-      const histories = this.getAllChatHistories();
-      const filtered = histories.filter(h => h.id !== id);
-      localStorage.setItem(this.CHAT_HISTORY_KEY, JSON.stringify(filtered));
+      const response = await fetch(`${this.baseUrl}/chat-history/${id}`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to delete chat history: ${response.status}`);
+      }
     } catch (error) {
       console.error('Failed to delete chat history:', error);
     }
   }
 
-  // Sessions Methods (enhanced from existing sessionService)
-  saveSessions(sessions: UserSession[]): void {
+  // Sessions Methods
+  async saveSessions(sessions: UserSession[]): Promise<void> {
     try {
-      localStorage.setItem(this.SESSIONS_KEY, JSON.stringify(sessions));
+      const response = await fetch(`${this.baseUrl}/sessions`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(sessions),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to save sessions: ${response.status}`);
+      }
     } catch (error) {
       console.error('Failed to save sessions:', error);
     }
   }
 
-  loadSessions(): UserSession[] {
+  async loadSessions(): Promise<UserSession[]> {
     try {
-      const data = localStorage.getItem(this.SESSIONS_KEY);
-      if (!data) return [];
-      
-      return JSON.parse(data).map((session: any) => ({
+      const response = await fetch(`${this.baseUrl}/sessions`);
+      if (!response.ok) {
+        throw new Error(`Failed to load sessions: ${response.status}`);
+      }
+
+      const data = await response.json();
+      return data.map((session: any) => ({
         ...session,
         startTime: new Date(session.startTime),
         endTime: session.endTime ? new Date(session.endTime) : undefined,

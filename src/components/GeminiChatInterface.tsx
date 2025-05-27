@@ -21,7 +21,7 @@ const GeminiChatInterface: React.FC = () => {
 
   useEffect(() => {
     // Load welcome message
-    addBotMessage("Hi! I'm powered by Gemini AI. Ask me anything about programming, interview questions, or general topics!");
+    addBotMessage("Hi! I'm powered by Gemini AI running on your local backend. Ask me anything!");
   }, []);
 
   const scrollToBottom = () => {
@@ -49,7 +49,7 @@ const GeminiChatInterface: React.FC = () => {
     setMessages(prev => [...prev, message]);
   };
 
-  const saveChatToHistory = (userMsg: string, botMsg: string) => {
+  const saveChatToHistory = async (userMsg: string, botMsg: string) => {
     const chatHistory: ChatHistory = {
       id: currentChatId,
       messages: [
@@ -58,7 +58,7 @@ const GeminiChatInterface: React.FC = () => {
       ],
       createdAt: new Date()
     };
-    localStorageDB.saveChatHistory(chatHistory);
+    await localStorageDB.saveChatHistory(chatHistory);
   };
 
   const handleSendMessage = async () => {
@@ -72,9 +72,9 @@ const GeminiChatInterface: React.FC = () => {
     try {
       const response = await geminiService.generateResponse(userMessage);
       addBotMessage(response.text);
-      saveChatToHistory(userMessage, response.text);
+      await saveChatToHistory(userMessage, response.text);
     } catch (error) {
-      addBotMessage('Sorry, I encountered an error. Please try again.');
+      addBotMessage('Sorry, I encountered an error. Please make sure the backend server is running on port 8000.');
     } finally {
       setIsLoading(false);
     }
@@ -95,18 +95,18 @@ const GeminiChatInterface: React.FC = () => {
             <div className="flex items-center justify-center mb-4">
               <Bot className="w-8 h-8 text-blue-600 mr-3" />
               <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent">
-                Gemini AI Chat
+                Local Gemini AI Chat
               </h1>
               <Bot className="w-8 h-8 text-blue-600 ml-3" />
             </div>
-            <p className="text-gray-600 text-lg">Powered by Google's Gemini AI</p>
+            <p className="text-gray-600 text-lg">Running locally on your machine (Frontend: 5000, Backend: 8000)</p>
           </div>
 
           <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-2xl border border-blue-100 h-[600px] flex flex-col overflow-hidden">
             <div className="bg-gradient-to-r from-blue-500 to-purple-500 p-4">
               <h3 className="text-white font-semibold text-lg flex items-center">
                 <Bot className="w-5 h-5 mr-2" />
-                AI Assistant
+                Local AI Assistant
               </h3>
             </div>
 
@@ -117,7 +117,7 @@ const GeminiChatInterface: React.FC = () => {
               {isLoading && (
                 <div className="flex items-center space-x-2 text-blue-600">
                   <Bot className="w-5 h-5 animate-pulse" />
-                  <span className="text-sm">Gemini is thinking...</span>
+                  <span className="text-sm">Processing with local backend...</span>
                 </div>
               )}
               <div ref={messagesEndRef} />
@@ -129,7 +129,7 @@ const GeminiChatInterface: React.FC = () => {
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   onKeyDown={handleKeyPress}
-                  placeholder="Ask Gemini anything..."
+                  placeholder="Ask Gemini anything (via local backend)..."
                   className="flex-1 min-h-[50px] resize-none border-2 border-blue-200 focus:border-blue-500 rounded-xl"
                   disabled={isLoading}
                 />
