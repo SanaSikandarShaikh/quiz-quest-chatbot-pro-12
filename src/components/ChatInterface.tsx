@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { ChatMessage as ChatMessageType, UserSession, Question } from '../types';
 import { questions, domains } from '../data/questions';
@@ -6,10 +5,12 @@ import { sessionService } from '../services/sessionService';
 import ChatMessage from './ChatMessage';
 import QuestionCard from './QuestionCard';
 import ScoreDisplay from './ScoreDisplay';
+import GeminiChatInterface from './GeminiChatInterface';
 import { Button } from '@/components/ui/button';
-import { Send, RotateCcw, Sparkles } from 'lucide-react';
+import { Send, RotateCcw, Sparkles, Bot, BookOpen } from 'lucide-react';
 
 const ChatInterface: React.FC = () => {
+  const [mode, setMode] = useState<'interview' | 'gemini'>('interview');
   const [messages, setMessages] = useState<ChatMessageType[]>([]);
   const [currentSession, setCurrentSession] = useState<UserSession | null>(null);
   const [currentQuestion, setCurrentQuestion] = useState<Question | null>(null);
@@ -22,9 +23,11 @@ const ChatInterface: React.FC = () => {
   const TOTAL_QUESTIONS = 5;
 
   useEffect(() => {
-    sessionService.loadFromLocalStorage();
-    addBotMessage("Hi! 👋 Welcome to the Interview Questions Generator! I'm here to help you practice interview questions. Let's start by selecting your experience level.", true);
-  }, []);
+    if (mode === 'interview') {
+      sessionService.loadFromLocalStorage();
+      addBotMessage("Hi! 👋 Welcome to the Interview Questions Generator! I'm here to help you practice interview questions. Let's start by selecting your experience level.", true);
+    }
+  }, [mode]);
 
   useEffect(() => {
     scrollToBottom();
@@ -193,11 +196,73 @@ Based on your performance, we'll now determine your eligibility for the role. Pl
     }, 500);
   };
 
+  const handleModeSwitch = (newMode: 'interview' | 'gemini') => {
+    setMode(newMode);
+    if (newMode === 'interview') {
+      // Reset interview state
+      setMessages([]);
+      setCurrentSession(null);
+      setCurrentQuestion(null);
+      setGameState('setup');
+      setSelectedLevel(null);
+      setSelectedDomain(null);
+      setAvailableQuestions([]);
+    }
+  };
+
+  // If in Gemini mode, render the Gemini interface
+  if (mode === 'gemini') {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50">
+        <div className="container mx-auto px-4 py-8">
+          <div className="max-w-6xl mx-auto">
+            <div className="text-center mb-8">
+              <div className="flex items-center justify-center mb-4 space-x-4">
+                <Button
+                  onClick={() => handleModeSwitch('interview')}
+                  className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-6 py-3 rounded-2xl font-bold shadow-lg transform hover:scale-105 transition-all duration-200 flex items-center space-x-2"
+                >
+                  <BookOpen className="w-5 h-5" />
+                  <span>Interview Mode</span>
+                </Button>
+                <Button
+                  className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white px-6 py-3 rounded-2xl font-bold shadow-lg flex items-center space-x-2"
+                  disabled
+                >
+                  <Bot className="w-5 h-5" />
+                  <span>Gemini Chat</span>
+                </Button>
+              </div>
+            </div>
+            <GeminiChatInterface />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Interview mode rendering (existing code)
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50">
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-8">
+            <div className="flex items-center justify-center mb-4 space-x-4">
+              <Button
+                className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-6 py-3 rounded-2xl font-bold shadow-lg flex items-center space-x-2"
+                disabled
+              >
+                <BookOpen className="w-5 h-5" />
+                <span>Interview Mode</span>
+              </Button>
+              <Button
+                onClick={() => handleModeSwitch('gemini')}
+                className="bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white px-6 py-3 rounded-2xl font-bold shadow-lg transform hover:scale-105 transition-all duration-200 flex items-center space-x-2"
+              >
+                <Bot className="w-5 h-5" />
+                <span>Gemini Chat</span>
+              </Button>
+            </div>
             <div className="flex items-center justify-center mb-4">
               <Sparkles className="w-8 h-8 text-purple-600 mr-3" />
               <h1 className="text-5xl font-bold bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 bg-clip-text text-transparent">
