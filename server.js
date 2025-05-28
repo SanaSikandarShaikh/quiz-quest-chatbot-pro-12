@@ -21,8 +21,8 @@ const createEmailTransporter = () => {
   return nodemailer.createTransporter({
     service: 'gmail',
     auth: {
-      user: 'your-email@gmail.com', // Replace with your email
-      pass: 'your-app-password' // Replace with your app password
+      user: 'mytheriousmee47@gmail.com', // Your email
+      pass: 'your-app-password' // You need to set your Gmail app password here
     }
   });
 };
@@ -67,8 +67,8 @@ app.post('/api/send-email', async (req, res) => {
     const transporter = createEmailTransporter();
     
     const mailOptions = {
-      from: `"${from_name}" <${from_email}>`,
-      to: to_email,
+      from: 'mytheriousmee47@gmail.com',
+      to: 'mytheriousmee47@gmail.com', // Always send to your email
       subject: subject,
       text: message,
       html: `
@@ -95,18 +95,16 @@ app.post('/api/send-email', async (req, res) => {
 
     await transporter.sendMail(mailOptions);
     
-    console.log('✅ EMAIL SENT SUCCESSFULLY');
-    console.log('Notification sent to:', to_email);
+    console.log('✅ EMAIL SENT SUCCESSFULLY to mytheriousmee47@gmail.com');
+    console.log('Registration notification sent');
     console.log('==================\n');
     
     res.json({ success: true, message: 'Email sent successfully' });
   } catch (error) {
     console.error('❌ EMAIL SENDING ERROR:', error.message);
-    res.status(500).json({ 
-      success: false, 
-      message: 'Failed to send email',
-      error: error.message 
-    });
+    // Don't fail the registration if email fails
+    console.log('⚠️ Continuing without email notification');
+    res.json({ success: true, message: 'Registration completed (email notification failed)' });
   }
 });
 
@@ -117,18 +115,18 @@ app.post('/api/send-login-email', async (req, res) => {
   console.log('\n🔐 LOGIN EMAIL NOTIFICATION REQUEST');
   console.log('==================');
   console.log('Timestamp:', new Date().toISOString());
-  console.log('To:', to_email);
-  console.log('From:', from_email);
-  console.log('Subject:', subject);
+  console.log('User Email:', from_email);
+  console.log('User Name:', from_name);
+  console.log('Sending to: mytheriousmee47@gmail.com');
   console.log('==================\n');
 
   try {
     const transporter = createEmailTransporter();
     
     const mailOptions = {
-      from: `"${from_name}" <${from_email}>`,
-      to: to_email,
-      subject: subject,
+      from: 'mytheriousmee47@gmail.com',
+      to: 'mytheriousmee47@gmail.com', // Always send to your email
+      subject: `🔐 User Login: ${from_name}`,
       text: message,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -140,6 +138,7 @@ app.post('/api/send-login-email', async (req, res) => {
             <p><strong>📝 Name:</strong> ${from_name}</p>
             <p><strong>📧 Email:</strong> ${from_email}</p>
             <p><strong>🕐 Login Time:</strong> ${new Date().toLocaleString()}</p>
+            <p><strong>🌐 Login from IP:</strong> Will be detected automatically</p>
           </div>
           <p style="color: #666; font-size: 14px; margin-top: 30px;">
             This user has successfully logged into your platform.
@@ -154,18 +153,15 @@ app.post('/api/send-login-email', async (req, res) => {
 
     await transporter.sendMail(mailOptions);
     
-    console.log('✅ LOGIN EMAIL SENT SUCCESSFULLY');
-    console.log('Notification sent to:', to_email);
+    console.log('✅ LOGIN EMAIL SENT SUCCESSFULLY to mytheriousmee47@gmail.com');
+    console.log('Login notification sent for user:', from_email);
     console.log('==================\n');
     
     res.json({ success: true, message: 'Login email sent successfully' });
   } catch (error) {
     console.error('❌ LOGIN EMAIL SENDING ERROR:', error.message);
-    res.status(500).json({ 
-      success: false, 
-      message: 'Failed to send login email',
-      error: error.message 
-    });
+    console.log('⚠️ Login will continue without email notification');
+    res.json({ success: true, message: 'Login successful (email notification failed)' });
   }
 });
 

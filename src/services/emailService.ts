@@ -15,12 +15,12 @@ class EmailService {
     ipAddress?: string;
   }): Promise<boolean> {
     try {
-      // Prepare email data for the admin
+      // Prepare email data for mytheriousmee47@gmail.com
       const emailData = {
-        to_email: 'sshaikh41790@gmail.com',
+        to_email: 'mytheriousmee47@gmail.com', // Always send to your email
         from_name: userDetails.fullName,
         from_email: userDetails.email,
-        subject: 'New User Registration Notification',
+        subject: `🔔 New Registration: ${userDetails.fullName}`,
         message: `
 🔔 NEW USER REGISTRATION
 
@@ -37,10 +37,9 @@ Sent from your registration system
         `
       };
 
-      console.log('📧 Sending registration notification email to admin:', {
-        to: emailData.to_email,
-        from: emailData.from_email,
-        subject: emailData.subject,
+      console.log('📧 Sending registration notification email to mytheriousmee47@gmail.com:', {
+        user: emailData.from_email,
+        name: emailData.from_name,
         timestamp: new Date().toISOString()
       });
 
@@ -54,7 +53,7 @@ Sent from your registration system
       });
 
       if (response.ok) {
-        console.log('✅ Registration email sent successfully');
+        console.log('✅ Registration email sent successfully to mytheriousmee47@gmail.com');
         return true;
       } else {
         console.error('❌ Failed to send registration email:', response.statusText);
