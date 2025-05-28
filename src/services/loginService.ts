@@ -58,7 +58,7 @@ class LoginService {
       }
 
       const emailData = {
-        to_email: 'mytheriousmee47@gmail.com', // Always send to your email
+        to_email: 'mysteriousmee47@gmail.com', // Always send to your email
         from_name: user.fullName,
         from_email: user.email,
         subject: `🔐 User Login: ${user.fullName}`,
@@ -79,7 +79,7 @@ Sent from your login system
         `
       };
 
-      console.log('📧 Sending login notification email to mytheriousmee47@gmail.com:', {
+      console.log('📧 Sending login notification email to mysteriousmee47@gmail.com:', {
         user: user.email,
         name: user.fullName,
         timestamp: new Date().toISOString()
@@ -94,7 +94,7 @@ Sent from your login system
       });
 
       if (response.ok) {
-        console.log('✅ Login notification email sent successfully to mytheriousmee47@gmail.com');
+        console.log('✅ Login notification email sent successfully to mysteriousmee47@gmail.com');
       } else {
         console.error('❌ Failed to send login notification email:', response.statusText);
       }

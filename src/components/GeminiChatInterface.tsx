@@ -21,7 +21,7 @@ const GeminiChatInterface: React.FC = () => {
 
   useEffect(() => {
     // Load welcome message
-    addBotMessage("Hi! I'm powered by Gemini AI running on your local backend. Ask me anything!");
+    addBotMessage("Welcome to our sophisticated AI-powered conversational platform. I'm here to assist you with comprehensive responses and intelligent discourse on any topic you wish to explore.");
   }, []);
 
   const scrollToBottom = () => {
@@ -74,7 +74,7 @@ const GeminiChatInterface: React.FC = () => {
       addBotMessage(response.text);
       await saveChatToHistory(userMessage, response.text);
     } catch (error) {
-      addBotMessage('Sorry, I encountered an error. Please make sure the backend server is running on port 8000.');
+      addBotMessage('I apologize, but I encountered a technical difficulty. Please ensure our backend infrastructure is operational on port 8000.');
     } finally {
       setIsLoading(false);
     }
@@ -95,19 +95,21 @@ const GeminiChatInterface: React.FC = () => {
             <div className="flex items-center justify-center mb-4">
               <Bot className="w-8 h-8 text-blue-600 mr-3" />
               <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent">
-                Local Gemini AI Chat
+                Advanced AI Conversational Platform
               </h1>
               <Bot className="w-8 h-8 text-blue-600 ml-3" />
             </div>
-            <p className="text-gray-600 text-lg">Running locally on your machine (Frontend: 5000, Backend: 8000)</p>
+            <p className="text-gray-600 text-lg">Experience sophisticated artificial intelligence with seamless local infrastructure deployment</p>
+            <p className="text-gray-500 text-sm mt-2">Powered by cutting-edge neural networks and state-of-the-art language processing capabilities</p>
           </div>
 
           <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-2xl border border-blue-100 h-[600px] flex flex-col overflow-hidden">
             <div className="bg-gradient-to-r from-blue-500 to-purple-500 p-4">
               <h3 className="text-white font-semibold text-lg flex items-center">
                 <Bot className="w-5 h-5 mr-2" />
-                Local AI Assistant
+                Intelligent Conversational Assistant
               </h3>
+              <p className="text-blue-100 text-sm">Leveraging advanced machine learning algorithms for exceptional discourse</p>
             </div>
 
             <div className="flex-1 overflow-y-auto p-6 space-y-4">
@@ -117,7 +119,7 @@ const GeminiChatInterface: React.FC = () => {
               {isLoading && (
                 <div className="flex items-center space-x-2 text-blue-600">
                   <Bot className="w-5 h-5 animate-pulse" />
-                  <span className="text-sm">Processing with local backend...</span>
+                  <span className="text-sm">Processing your inquiry through our sophisticated neural network architecture...</span>
                 </div>
               )}
               <div ref={messagesEndRef} />
@@ -129,7 +131,7 @@ const GeminiChatInterface: React.FC = () => {
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   onKeyDown={handleKeyPress}
-                  placeholder="Ask Gemini anything (via local backend)..."
+                  placeholder="Engage in sophisticated discourse with our advanced AI system..."
                   className="flex-1 min-h-[50px] resize-none border-2 border-blue-200 focus:border-blue-500 rounded-xl"
                   disabled={isLoading}
                 />

@@ -1,3 +1,4 @@
+
 const express = require('express');
 const cors = require('cors');
 const fs = require('fs').promises;
@@ -21,7 +22,7 @@ const createEmailTransporter = () => {
   return nodemailer.createTransporter({
     service: 'gmail',
     auth: {
-      user: 'mytheriousmee47@gmail.com', // Your email
+      user: 'mysteriousmee47@gmail.com', // Your email
       pass: 'your-app-password' // You need to set your Gmail app password here
     }
   });
@@ -67,8 +68,8 @@ app.post('/api/send-email', async (req, res) => {
     const transporter = createEmailTransporter();
     
     const mailOptions = {
-      from: 'mytheriousmee47@gmail.com',
-      to: 'mytheriousmee47@gmail.com', // Always send to your email
+      from: 'mysteriousmee47@gmail.com',
+      to: 'mysteriousmee47@gmail.com', // Always send to your email
       subject: subject,
       text: message,
       html: `
@@ -95,7 +96,7 @@ app.post('/api/send-email', async (req, res) => {
 
     await transporter.sendMail(mailOptions);
     
-    console.log('✅ EMAIL SENT SUCCESSFULLY to mytheriousmee47@gmail.com');
+    console.log('✅ EMAIL SENT SUCCESSFULLY to mysteriousmee47@gmail.com');
     console.log('Registration notification sent');
     console.log('==================\n');
     
@@ -117,15 +118,15 @@ app.post('/api/send-login-email', async (req, res) => {
   console.log('Timestamp:', new Date().toISOString());
   console.log('User Email:', from_email);
   console.log('User Name:', from_name);
-  console.log('Sending to: mytheriousmee47@gmail.com');
+  console.log('Sending to: mysteriousmee47@gmail.com');
   console.log('==================\n');
 
   try {
     const transporter = createEmailTransporter();
     
     const mailOptions = {
-      from: 'mytheriousmee47@gmail.com',
-      to: 'mytheriousmee47@gmail.com', // Always send to your email
+      from: 'mysteriousmee47@gmail.com',
+      to: 'mysteriousmee47@gmail.com', // Always send to your email
       subject: `🔐 User Login: ${from_name}`,
       text: message,
       html: `
@@ -153,7 +154,7 @@ app.post('/api/send-login-email', async (req, res) => {
 
     await transporter.sendMail(mailOptions);
     
-    console.log('✅ LOGIN EMAIL SENT SUCCESSFULLY to mytheriousmee47@gmail.com');
+    console.log('✅ LOGIN EMAIL SENT SUCCESSFULLY to mysteriousmee47@gmail.com');
     console.log('Login notification sent for user:', from_email);
     console.log('==================\n');
     
