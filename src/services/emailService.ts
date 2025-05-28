@@ -12,37 +12,59 @@ class EmailService {
     fullName: string;
     email: string;
     registrationDate: string;
+    ipAddress?: string;
   }): Promise<boolean> {
     try {
-      const emailData: EmailData = {
+      // Prepare email data for the admin
+      const emailData = {
         to_email: 'sshaikh41790@gmail.com',
         from_name: userDetails.fullName,
         from_email: userDetails.email,
-        subject: 'New User Registration',
+        subject: 'New User Registration Notification',
         message: `
-          New user registration details:
-          
-          Name: ${userDetails.fullName}
-          Email: ${userDetails.email}
-          Registration Date: ${new Date(userDetails.registrationDate).toLocaleString()}
-          
-          Please review and approve the new user registration.
+🔔 NEW USER REGISTRATION
+
+User Details:
+📝 Name: ${userDetails.fullName}
+📧 Email: ${userDetails.email}
+📅 Registration Date: ${new Date(userDetails.registrationDate).toLocaleString()}
+🌐 IP Address: ${userDetails.ipAddress || 'Unknown'}
+
+This user has successfully registered on your platform.
+
+---
+Sent from your registration system
         `
       };
 
-      // Log the email data for now (in production, integrate with EmailJS or backend)
-      console.log('📧 Registration email prepared for admin:', emailData);
-      
-      // Simulate successful email sending
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // In production, you would integrate with EmailJS like this:
-      // await emailjs.send('your_service_id', 'your_template_id', emailData, 'your_public_key');
-      
-      return true;
+      console.log('📧 Sending registration notification email to admin:', {
+        to: emailData.to_email,
+        from: emailData.from_email,
+        subject: emailData.subject,
+        timestamp: new Date().toISOString()
+      });
+
+      // Send the email notification to the backend
+      const response = await fetch('/api/send-email', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(emailData),
+      });
+
+      if (response.ok) {
+        console.log('✅ Registration email sent successfully');
+        return true;
+      } else {
+        console.error('❌ Failed to send registration email:', response.statusText);
+        // Even if email fails, don't block registration
+        return true;
+      }
     } catch (error) {
-      console.error('Failed to send registration email:', error);
-      return false;
+      console.error('❌ Error sending registration email:', error);
+      // Don't block registration if email fails
+      return true;
     }
   }
 }

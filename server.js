@@ -1,8 +1,8 @@
-
 const express = require('express');
 const cors = require('cors');
 const fs = require('fs').promises;
 const path = require('path');
+const nodemailer = require('nodemailer');
 
 const app = express();
 const PORT = 8000;
@@ -15,6 +15,17 @@ app.use(express.json());
 const DATA_DIR = path.join(__dirname, 'local_data');
 const CHAT_HISTORY_FILE = path.join(DATA_DIR, 'chat_history.json');
 const SESSIONS_FILE = path.join(DATA_DIR, 'sessions.json');
+
+// Email transporter configuration
+const createEmailTransporter = () => {
+  return nodemailer.createTransporter({
+    service: 'gmail',
+    auth: {
+      user: 'your-email@gmail.com', // Replace with your email
+      pass: 'your-app-password' // Replace with your app password
+    }
+  });
+};
 
 // Ensure data directory exists
 async function ensureDataDir() {
@@ -39,6 +50,65 @@ async function initializeDataFiles() {
     await fs.writeFile(SESSIONS_FILE, JSON.stringify([]));
   }
 }
+
+// Email sending endpoint
+app.post('/api/send-email', async (req, res) => {
+  const { to_email, from_name, from_email, subject, message } = req.body;
+  
+  console.log('\n📧 EMAIL NOTIFICATION REQUEST');
+  console.log('==================');
+  console.log('Timestamp:', new Date().toISOString());
+  console.log('To:', to_email);
+  console.log('From:', from_email);
+  console.log('Subject:', subject);
+  console.log('==================\n');
+
+  try {
+    const transporter = createEmailTransporter();
+    
+    const mailOptions = {
+      from: `"${from_name}" <${from_email}>`,
+      to: to_email,
+      subject: subject,
+      text: message,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <h2 style="color: #333; border-bottom: 2px solid #007bff; padding-bottom: 10px;">
+            🔔 New User Registration
+          </h2>
+          <div style="background: #f8f9fa; padding: 20px; border-radius: 5px; margin: 20px 0;">
+            <h3 style="color: #007bff; margin-top: 0;">User Details:</h3>
+            <p><strong>📝 Name:</strong> ${from_name}</p>
+            <p><strong>📧 Email:</strong> ${from_email}</p>
+            <p><strong>📅 Registration Date:</strong> ${new Date().toLocaleString()}</p>
+          </div>
+          <p style="color: #666; font-size: 14px; margin-top: 30px;">
+            This user has successfully registered on your platform.
+          </p>
+          <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;">
+          <p style="color: #999; font-size: 12px;">
+            Sent from your registration system
+          </p>
+        </div>
+      `
+    };
+
+    await transporter.sendMail(mailOptions);
+    
+    console.log('✅ EMAIL SENT SUCCESSFULLY');
+    console.log('Notification sent to:', to_email);
+    console.log('==================\n');
+    
+    res.json({ success: true, message: 'Email sent successfully' });
+  } catch (error) {
+    console.error('❌ EMAIL SENDING ERROR:', error.message);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Failed to send email',
+      error: error.message 
+    });
+  }
+});
 
 // Gemini API endpoint
 app.post('/api/gemini', async (req, res) => {
@@ -182,6 +252,7 @@ async function startServer() {
   app.listen(PORT, () => {
     console.log(`🚀 Local Backend Server running on http://localhost:${PORT}`);
     console.log('📁 Data stored in:', DATA_DIR);
+    console.log('📧 Email notifications enabled');
     console.log('🔍 All requests will be logged in terminal\n');
   });
 }

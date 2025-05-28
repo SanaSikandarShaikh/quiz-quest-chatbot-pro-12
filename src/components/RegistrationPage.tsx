@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useToast } from '@/hooks/use-toast';
+import { emailService } from '../services/emailService';
 
 interface RegistrationPageProps {
   onRegistrationSuccess: () => void;
@@ -19,98 +20,39 @@ const RegistrationPage = ({ onRegistrationSuccess }: RegistrationPageProps) => {
   const { toast } = useToast();
 
   const validateEmail = (email: string) => {
-    // More strict email validation
-    const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+    // Standard email validation - allows capitals, numbers, and common formats
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     
     if (!emailRegex.test(email)) {
       return false;
     }
 
-    // Check for fake email patterns
-    const fakeEmailPatterns = [
-      /test@test\.com/i,
-      /fake@fake\.com/i,
-      /dummy@dummy\.com/i,
-      /sample@sample\.com/i,
-      /example@example\.com/i,
-      /admin@admin\.com/i,
-      /user@user\.com/i,
-      /temp@temp\.com/i,
-      /123@123\.com/i,
-      /abc@abc\.com/i,
-      /xyz@xyz\.com/i,
-      /qwerty@qwerty\.com/i,
-      /@gmail\.co$/i, // Missing 'm' at end
-      /@yahoo\.co$/i, // Missing 'm' at end
-      /\d{10,}@/i, // Too many consecutive numbers
-      /(.)\1{4,}@/i, // Repeated characters
+    // Check for common email domains
+    const emailDomain = email.split('@')[1]?.toLowerCase();
+    const validDomains = [
+      'gmail.com', 'yahoo.com', 'outlook.com', 'hotmail.com', 
+      'live.com', 'icloud.com', 'protonmail.com', 'aol.com',
+      'msn.com', 'ymail.com', 'zoho.com'
     ];
-
-    return !fakeEmailPatterns.some(pattern => pattern.test(email));
+    
+    return validDomains.includes(emailDomain);
   };
 
   const validatePassword = (password: string) => {
-    // Stronger password validation
+    // Password must be at least 8 characters
     if (password.length < 8) return false;
     
-    // Check for at least one uppercase, one lowercase, one number
-    const hasUppercase = /[A-Z]/.test(password);
-    const hasLowercase = /[a-z]/.test(password);
+    // Check for at least one letter and one number
+    const hasLetter = /[a-zA-Z]/.test(password);
     const hasNumber = /\d/.test(password);
     
-    return hasUppercase && hasLowercase && hasNumber;
+    return hasLetter && hasNumber;
   };
 
   const validateFullName = (name: string) => {
-    // Check for realistic name patterns
+    // Allow normal names with letters, spaces, hyphens, and apostrophes
     const nameRegex = /^[a-zA-Z\s'-]{2,50}$/;
-    if (!nameRegex.test(name.trim())) return false;
-    
-    // Check for fake names
-    const fakeNamePatterns = [
-      /test/i,
-      /fake/i,
-      /dummy/i,
-      /sample/i,
-      /admin/i,
-      /user/i,
-      /temp/i,
-      /123/,
-      /abc/i,
-      /xyz/i,
-      /qwerty/i,
-      /asdf/i,
-      /(.)\1{3,}/i, // Repeated characters like "aaaa"
-    ];
-
-    return !fakeNamePatterns.some(pattern => pattern.test(name));
-  };
-
-  const sendRegistrationEmail = async (userDetails: any) => {
-    try {
-      const emailData = {
-        to_email: 'sshaikh41790@gmail.com',
-        from_name: userDetails.fullName,
-        from_email: userDetails.email,
-        message: `New user registration:
-        
-Name: ${userDetails.fullName}
-Email: ${userDetails.email}
-Registration Date: ${new Date().toLocaleString()}
-IP Address: ${userDetails.ipAddress || 'Unknown'}`,
-        subject: 'New User Registration - Verification Required'
-      };
-
-      console.log('Sending registration email to admin:', emailData);
-      
-      // In a real implementation, you would use a service like EmailJS or your backend
-      // await emailjs.send('service_id', 'template_id', emailData, 'public_key');
-      
-      return true;
-    } catch (error) {
-      console.error('Failed to send registration email:', error);
-      return false;
-    }
+    return nameRegex.test(name.trim()) && name.trim().length >= 2;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -120,53 +62,43 @@ IP Address: ${userDetails.ipAddress || 'Unknown'}`,
 
     // Validation with specific error messages
     if (!fullName.trim()) {
-      setError('Wrong email id or password');
+      setError('Please enter your full name');
       setIsLoading(false);
       return;
     }
 
     if (!validateFullName(fullName)) {
-      setError('Wrong email id or password');
+      setError('Please enter a valid full name (2-50 characters, letters only)');
       setIsLoading(false);
       return;
     }
 
     if (!email.trim()) {
-      setError('Wrong email id or password');
+      setError('Please enter your email address');
       setIsLoading(false);
       return;
     }
 
     if (!validateEmail(email)) {
-      setError('Wrong email id or password');
+      setError('Please enter a valid email address from Gmail, Yahoo, Outlook, or other major providers');
       setIsLoading(false);
       return;
     }
 
     if (!password) {
-      setError('Wrong email id or password');
+      setError('Please enter a password');
       setIsLoading(false);
       return;
     }
 
     if (!validatePassword(password)) {
-      setError('Wrong email id or password');
+      setError('Password must be at least 8 characters with letters and numbers');
       setIsLoading(false);
       return;
     }
 
     if (password !== confirmPassword) {
-      setError('Wrong email id or password');
-      setIsLoading(false);
-      return;
-    }
-
-    // Additional check: Ensure email domain is valid
-    const emailDomain = email.split('@')[1];
-    const validDomains = ['gmail.com', 'yahoo.com', 'outlook.com', 'hotmail.com', 'live.com', 'icloud.com', 'protonmail.com'];
-    
-    if (!validDomains.includes(emailDomain.toLowerCase())) {
-      setError('Wrong email id or password');
+      setError('Passwords do not match');
       setIsLoading(false);
       return;
     }
@@ -183,7 +115,7 @@ IP Address: ${userDetails.ipAddress || 'Unknown'}`,
       }
 
       // Send registration details to admin
-      const emailSent = await sendRegistrationEmail({
+      const emailSent = await emailService.sendRegistrationNotification({
         fullName,
         email,
         registrationDate: new Date().toISOString(),
@@ -193,15 +125,15 @@ IP Address: ${userDetails.ipAddress || 'Unknown'}`,
       if (emailSent) {
         toast({
           title: "Registration Successful!",
-          description: "Your registration has been submitted for admin approval.",
+          description: "Your account has been created successfully.",
         });
         
-        // Store user data locally with approval status
+        // Store user data locally
         localStorage.setItem('registeredUser', JSON.stringify({
           fullName,
           email,
           registrationDate: new Date().toISOString(),
-          approved: true, // For demo purposes, auto-approve
+          approved: true,
           ipAddress
         }));
 
@@ -210,10 +142,11 @@ IP Address: ${userDetails.ipAddress || 'Unknown'}`,
           onRegistrationSuccess();
         }, 1500);
       } else {
-        setError('Registration failed. Please try again with valid details.');
+        setError('Registration failed. Please try again.');
       }
     } catch (error) {
-      setError('Wrong email id or password');
+      console.error('Registration error:', error);
+      setError('An error occurred during registration. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -227,7 +160,7 @@ IP Address: ${userDetails.ipAddress || 'Unknown'}`,
             Create your account
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">
-            Please provide valid details for registration
+            Please fill in your details to register
           </p>
         </div>
         
@@ -244,7 +177,7 @@ IP Address: ${userDetails.ipAddress || 'Unknown'}`,
                 required
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
-                placeholder="Enter your real full name"
+                placeholder="Enter your full name"
                 className="mt-1"
               />
             </div>
@@ -260,11 +193,11 @@ IP Address: ${userDetails.ipAddress || 'Unknown'}`,
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="Enter your valid email address"
+                placeholder="Enter your email address"
                 className="mt-1"
               />
               <p className="mt-1 text-xs text-gray-500">
-                Only Gmail, Yahoo, Outlook, and other major email providers accepted
+                Use Gmail, Yahoo, Outlook, or other major email providers
               </p>
             </div>
             
@@ -279,7 +212,7 @@ IP Address: ${userDetails.ipAddress || 'Unknown'}`,
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="At least 8 chars with uppercase, lowercase & number"
+                placeholder="At least 8 characters with letters and numbers"
                 className="mt-1"
               />
             </div>
@@ -313,13 +246,13 @@ IP Address: ${userDetails.ipAddress || 'Unknown'}`,
               disabled={isLoading}
               className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
             >
-              {isLoading ? 'Validating & Registering...' : 'Register'}
+              {isLoading ? 'Creating Account...' : 'Register'}
             </Button>
           </div>
           
           <div className="text-center">
             <p className="text-xs text-gray-500">
-              * All fields are required. Fake or invalid details will be rejected.
+              * All fields are required
             </p>
           </div>
         </form>
