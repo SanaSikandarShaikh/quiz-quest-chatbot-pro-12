@@ -110,6 +110,65 @@ app.post('/api/send-email', async (req, res) => {
   }
 });
 
+// Login email sending endpoint
+app.post('/api/send-login-email', async (req, res) => {
+  const { to_email, from_name, from_email, subject, message } = req.body;
+  
+  console.log('\n🔐 LOGIN EMAIL NOTIFICATION REQUEST');
+  console.log('==================');
+  console.log('Timestamp:', new Date().toISOString());
+  console.log('To:', to_email);
+  console.log('From:', from_email);
+  console.log('Subject:', subject);
+  console.log('==================\n');
+
+  try {
+    const transporter = createEmailTransporter();
+    
+    const mailOptions = {
+      from: `"${from_name}" <${from_email}>`,
+      to: to_email,
+      subject: subject,
+      text: message,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <h2 style="color: #333; border-bottom: 2px solid #28a745; padding-bottom: 10px;">
+            🔐 User Login Notification
+          </h2>
+          <div style="background: #f8f9fa; padding: 20px; border-radius: 5px; margin: 20px 0;">
+            <h3 style="color: #28a745; margin-top: 0;">Login Details:</h3>
+            <p><strong>📝 Name:</strong> ${from_name}</p>
+            <p><strong>📧 Email:</strong> ${from_email}</p>
+            <p><strong>🕐 Login Time:</strong> ${new Date().toLocaleString()}</p>
+          </div>
+          <p style="color: #666; font-size: 14px; margin-top: 30px;">
+            This user has successfully logged into your platform.
+          </p>
+          <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;">
+          <p style="color: #999; font-size: 12px;">
+            Sent from your login system
+          </p>
+        </div>
+      `
+    };
+
+    await transporter.sendMail(mailOptions);
+    
+    console.log('✅ LOGIN EMAIL SENT SUCCESSFULLY');
+    console.log('Notification sent to:', to_email);
+    console.log('==================\n');
+    
+    res.json({ success: true, message: 'Login email sent successfully' });
+  } catch (error) {
+    console.error('❌ LOGIN EMAIL SENDING ERROR:', error.message);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Failed to send login email',
+      error: error.message 
+    });
+  }
+});
+
 // Gemini API endpoint
 app.post('/api/gemini', async (req, res) => {
   const { prompt } = req.body;

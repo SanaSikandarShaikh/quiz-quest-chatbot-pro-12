@@ -125,22 +125,23 @@ const RegistrationPage = ({ onRegistrationSuccess }: RegistrationPageProps) => {
       if (emailSent) {
         toast({
           title: "Registration Successful!",
-          description: "Your account has been created successfully.",
+          description: "Your account has been created. Please login with your credentials.",
         });
         
-        // Store user data locally
+        // Store user data locally WITH PASSWORD for login verification
         localStorage.setItem('registeredUser', JSON.stringify({
           fullName,
           email,
+          password, // Store password for login verification
           registrationDate: new Date().toISOString(),
           approved: true,
           ipAddress
         }));
 
-        // Small delay to show success message
+        // Small delay to show success message, then switch to login
         setTimeout(() => {
           onRegistrationSuccess();
-        }, 1500);
+        }, 2000);
       } else {
         setError('Registration failed. Please try again.');
       }
