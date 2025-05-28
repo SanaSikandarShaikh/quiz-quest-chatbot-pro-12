@@ -1,4 +1,3 @@
-
 const express = require('express');
 const cors = require('cors');
 const fs = require('fs').promises;
@@ -52,16 +51,16 @@ async function initializeDataFiles() {
   }
 }
 
-// Email sending endpoint
+// Registration email sending endpoint
 app.post('/api/send-email', async (req, res) => {
   const { to_email, from_name, from_email, subject, message } = req.body;
   
-  console.log('\n📧 EMAIL NOTIFICATION REQUEST');
+  console.log('\n📧 REGISTRATION EMAIL NOTIFICATION REQUEST');
   console.log('==================');
   console.log('Timestamp:', new Date().toISOString());
-  console.log('To:', to_email);
-  console.log('From:', from_email);
-  console.log('Subject:', subject);
+  console.log('User:', from_email);
+  console.log('Name:', from_name);
+  console.log('Sending to: mysteriousmee47@gmail.com');
   console.log('==================\n');
 
   try {
@@ -96,14 +95,13 @@ app.post('/api/send-email', async (req, res) => {
 
     await transporter.sendMail(mailOptions);
     
-    console.log('✅ EMAIL SENT SUCCESSFULLY to mysteriousmee47@gmail.com');
-    console.log('Registration notification sent');
+    console.log('✅ REGISTRATION EMAIL SENT SUCCESSFULLY to mysteriousmee47@gmail.com');
+    console.log('Registration notification sent for user:', from_email);
     console.log('==================\n');
     
     res.json({ success: true, message: 'Email sent successfully' });
   } catch (error) {
-    console.error('❌ EMAIL SENDING ERROR:', error.message);
-    // Don't fail the registration if email fails
+    console.error('❌ REGISTRATION EMAIL SENDING ERROR:', error.message);
     console.log('⚠️ Continuing without email notification');
     res.json({ success: true, message: 'Registration completed (email notification failed)' });
   }
@@ -139,7 +137,7 @@ app.post('/api/send-login-email', async (req, res) => {
             <p><strong>📝 Name:</strong> ${from_name}</p>
             <p><strong>📧 Email:</strong> ${from_email}</p>
             <p><strong>🕐 Login Time:</strong> ${new Date().toLocaleString()}</p>
-            <p><strong>🌐 Login from IP:</strong> Will be detected automatically</p>
+            <p><strong>🌐 Login IP:</strong> Will be detected automatically</p>
           </div>
           <p style="color: #666; font-size: 14px; margin-top: 30px;">
             This user has successfully logged into your platform.

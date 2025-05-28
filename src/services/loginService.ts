@@ -35,7 +35,7 @@ class LoginService {
         return { success: false, message: 'Password does not match.' };
       }
 
-      // Login successful - send notification email to mytheriousmee47@gmail.com
+      // Login successful - send notification email to mysteriousmee47@gmail.com
       await this.sendLoginNotification(storedUser);
 
       return { success: true, user: storedUser, message: 'Login successful!' };
@@ -58,7 +58,7 @@ class LoginService {
       }
 
       const emailData = {
-        to_email: 'mysteriousmee47@gmail.com', // Always send to your email
+        to_email: 'mysteriousmee47@gmail.com', // Send to your email
         from_name: user.fullName,
         from_email: user.email,
         subject: `🔐 User Login: ${user.fullName}`,

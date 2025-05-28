@@ -21,7 +21,7 @@ const GeminiChatInterface: React.FC = () => {
 
   useEffect(() => {
     // Load welcome message
-    addBotMessage("Welcome to our sophisticated AI-powered conversational platform. I'm here to assist you with comprehensive responses and intelligent discourse on any topic you wish to explore.");
+    addBotMessage("Welcome to our sophisticated AI-powered conversational platform. I'm here to assist you with comprehensive responses and intelligent discourse on any topic you wish to explore. Experience cutting-edge artificial intelligence technology designed for professional and academic excellence.");
   }, []);
 
   const scrollToBottom = () => {
