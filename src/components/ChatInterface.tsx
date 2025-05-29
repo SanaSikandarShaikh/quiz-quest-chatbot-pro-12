@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { ChatMessage as ChatMessageType, UserSession, Question } from '../types';
 import { questions, domains } from '../data/questions';
@@ -241,11 +242,11 @@ Based on your performance, we'll now determine your eligibility for the role. Pl
     );
   }
 
-  // Interview mode rendering (existing code)
+  // Interview mode rendering - Changed to vertical layout
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50">
       <div className="container mx-auto px-4 py-8">
-        <div className="max-w-6xl mx-auto">
+        <div className="max-w-7xl mx-auto">
           <div className="text-center mb-8">
             <div className="flex items-center justify-center mb-4 space-x-4">
               <Button
@@ -278,9 +279,10 @@ Based on your performance, we'll now determine your eligibility for the role. Pl
             </div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Chat Section */}
-            <div className="lg:col-span-2">
+          {/* Changed to vertical layout - Chat Section on top */}
+          <div className="space-y-8">
+            {/* Chat Section - Full width */}
+            <div className="w-full">
               <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-2xl border border-purple-100 h-[600px] flex flex-col overflow-hidden">
                 <div className="bg-gradient-to-r from-purple-500 to-pink-500 p-4">
                   <h3 className="text-white font-semibold text-lg">Assessment Chat</h3>
@@ -353,27 +355,31 @@ Based on your performance, we'll now determine your eligibility for the role. Pl
               </div>
             </div>
 
-            {/* Question/Score Section */}
-            <div className="lg:col-span-1">
+            {/* Assessment Section - Below chat, full width, increased height */}
+            <div className="w-full">
               {gameState === 'playing' && currentQuestion && currentSession && (
-                <QuestionCard
-                  question={currentQuestion}
-                  onAnswer={handleAnswer}
-                  questionNumber={currentSession.answers.length + 1}
-                  totalQuestions={availableQuestions.length}
-                />
+                <div className="min-h-[500px]">
+                  <QuestionCard
+                    question={currentQuestion}
+                    onAnswer={handleAnswer}
+                    questionNumber={currentSession.answers.length + 1}
+                    totalQuestions={availableQuestions.length}
+                  />
+                </div>
               )}
 
               {gameState === 'finished' && currentSession && (
-                <ScoreDisplay
-                  session={currentSession}
-                  availableQuestions={availableQuestions}
-                  onRestart={restartChat}
-                />
+                <div className="min-h-[600px]">
+                  <ScoreDisplay
+                    session={currentSession}
+                    availableQuestions={availableQuestions}
+                    onRestart={restartChat}
+                  />
+                </div>
               )}
 
               {gameState === 'setup' && (
-                <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-2xl border border-purple-100 p-8">
+                <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-2xl border border-purple-100 p-8 min-h-[400px]">
                   <div className="text-center mb-6">
                     <div className="w-16 h-16 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center mx-auto mb-4">
                       <Sparkles className="w-8 h-8 text-white" />
