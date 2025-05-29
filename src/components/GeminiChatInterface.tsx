@@ -90,7 +90,8 @@ const GeminiChatInterface: React.FC = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
       <div className="container mx-auto px-4 py-8">
-        <div className="max-w-4xl mx-auto">
+        {/* Reduced max-width from max-w-4xl to max-w-3xl to make chatbot narrower */}
+        <div className="max-w-3xl mx-auto">
           <div className="text-center mb-8">
             <div className="flex items-center justify-center mb-4">
               <Bot className="w-8 h-8 text-blue-600 mr-3" />
@@ -103,7 +104,8 @@ const GeminiChatInterface: React.FC = () => {
             <p className="text-gray-500 text-sm mt-2">Powered by cutting-edge neural networks and state-of-the-art language processing capabilities</p>
           </div>
 
-          <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-2xl border border-blue-100 h-[600px] flex flex-col overflow-hidden">
+          {/* Reduced height from h-[600px] to h-[500px] to make chatbot more compact */}
+          <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-2xl border border-blue-100 h-[500px] flex flex-col overflow-hidden">
             <div className="bg-gradient-to-r from-blue-500 to-purple-500 p-4">
               <h3 className="text-white font-semibold text-lg flex items-center">
                 <Bot className="w-5 h-5 mr-2" />
