@@ -146,13 +146,13 @@ const Index = () => {
       <div className="absolute top-4 right-4 z-10 flex gap-3">
         <button
           onClick={toggleAdminDashboard}
-          className="px-4 py-2 text-sm bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors shadow-lg"
+          className="px-4 py-2 text-sm bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg hover:from-blue-600 hover:to-purple-700 transition-all duration-300 transform hover:scale-105 shadow-lg border border-blue-400/30 font-medium"
         >
-          👨‍💼 Admin Dashboard
+          Admin Dashboard
         </button>
         <button
           onClick={handleLogout}
-          className="px-4 py-2 text-sm bg-red-500 text-white rounded hover:bg-red-600 transition-colors shadow-lg"
+          className="px-4 py-2 text-sm bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors shadow-lg font-medium"
         >
           Logout
         </button>
