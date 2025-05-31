@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { ChatMessage as ChatMessageType, UserSession, Question } from '../types';
 import { questions, domains } from '../data/questions';
 import { sessionService } from '../services/sessionService';

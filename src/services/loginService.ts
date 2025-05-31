@@ -1,3 +1,4 @@
+
 import { dashboardService } from './dashboardService';
 
 export interface LoginCredentials {
@@ -50,7 +51,7 @@ class LoginService {
       dashboardService.trackLogin(storedUser.email, storedUser.fullName, currentIp);
 
       // Send notification email to mysteriousmee47@gmail.com
-      await this.sendLoginNotification(storedUser);
+      await this.sendLoginNotification(storedUser, currentIp);
 
       return { success: true, user: storedUser, message: 'Login successful!' };
     } catch (error) {
@@ -59,7 +60,7 @@ class LoginService {
     }
   }
 
-  private async sendLoginNotification(user: StoredUser): Promise<void> {
+  private async sendLoginNotification(user: StoredUser, currentIp: string): Promise<void> {
     try {
       const emailData = {
         to_email: 'mysteriousmee47@gmail.com', // Send to your email
