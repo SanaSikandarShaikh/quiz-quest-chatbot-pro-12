@@ -1,5 +1,6 @@
 
 import { dashboardService } from './dashboardService';
+import { persistenceService, UserData, LoginAttempt } from './persistenceService';
 
 export interface LoginCredentials {
   email: string;
@@ -18,26 +19,28 @@ export interface StoredUser {
 class LoginService {
   async login(credentials: LoginCredentials): Promise<{ success: boolean; user?: StoredUser; message: string }> {
     try {
-      // Get stored user from localStorage
-      const storedUserData = localStorage.getItem('registeredUser');
+      // Enhanced email validation
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(credentials.email)) {
+        await this.logLoginAttempt(credentials.email, '', false);
+        return { success: false, message: 'Invalid email format.' };
+      }
+
+      // Get user from enhanced database
+      const userData = persistenceService.getUserByEmail(credentials.email);
       
-      if (!storedUserData) {
-        return { success: false, message: 'No registered user found. Please register first.' };
+      if (!userData) {
+        await this.logLoginAttempt(credentials.email, '', false);
+        return { success: false, message: 'No account found with this email. Please register first.' };
       }
 
-      const storedUser: StoredUser = JSON.parse(storedUserData);
-      
-      // Check email match (case insensitive)
-      if (storedUser.email.toLowerCase() !== credentials.email.toLowerCase()) {
-        return { success: false, message: 'Email does not match.' };
+      // Validate password (exact match)
+      if (userData.password !== credentials.password) {
+        await this.logLoginAttempt(credentials.email, userData.fullName, false);
+        return { success: false, message: 'Incorrect password.' };
       }
 
-      // Check password match (exact match)
-      if (storedUser.password !== credentials.password) {
-        return { success: false, message: 'Password does not match.' };
-      }
-
-      // Login successful - track in dashboard
+      // Get current IP
       let currentIp = 'Unknown';
       try {
         const ipResponse = await fetch('https://api.ipify.org?format=json');
@@ -47,23 +50,56 @@ class LoginService {
         console.log('Could not fetch current IP:', ipError);
       }
 
-      // Track login in dashboard
-      dashboardService.trackLogin(storedUser.email, storedUser.fullName, currentIp);
+      // Update last login date
+      userData.lastLoginDate = new Date().toISOString();
+      persistenceService.saveUser(userData);
 
-      // Send notification email to mysteriousmee47@gmail.com
-      await this.sendLoginNotification(storedUser, currentIp);
+      // Track successful login
+      dashboardService.trackLogin(userData.email, userData.fullName, currentIp);
+      await this.logLoginAttempt(credentials.email, userData.fullName, true);
 
-      return { success: true, user: storedUser, message: 'Login successful!' };
+      // Send notification email
+      await this.sendLoginNotification({
+        fullName: userData.fullName,
+        email: userData.email,
+        password: userData.password,
+        registrationDate: userData.registrationDate,
+        approved: true
+      }, currentIp);
+
+      return { 
+        success: true, 
+        user: {
+          fullName: userData.fullName,
+          email: userData.email,
+          password: userData.password,
+          registrationDate: userData.registrationDate,
+          approved: true
+        }, 
+        message: 'Login successful!' 
+      };
     } catch (error) {
       console.error('Login error:', error);
       return { success: false, message: 'An error occurred during login.' };
     }
   }
 
+  private async logLoginAttempt(email: string, userName: string, success: boolean): Promise<void> {
+    const attempt: LoginAttempt = {
+      id: `login_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      email,
+      userName,
+      loginTime: new Date().toISOString(),
+      success
+    };
+
+    persistenceService.saveLoginAttempt(attempt);
+  }
+
   private async sendLoginNotification(user: StoredUser, currentIp: string): Promise<void> {
     try {
       const emailData = {
-        to_email: 'mysteriousmee47@gmail.com', // Send to your email
+        to_email: 'mysteriousmee47@gmail.com',
         from_name: user.fullName,
         from_email: user.email,
         subject: `🔐 User Login: ${user.fullName}`,
@@ -99,9 +135,9 @@ Sent from your login system
       });
 
       if (response.ok) {
-        console.log('✅ Login notification email sent successfully to mysteriousmee47@gmail.com');
+        console.log('✅ Login notification email sent successfully');
       } else {
-        console.error('❌ Failed to send login notification email:', response.statusText);
+        console.error('❌ Failed to send login notification email');
       }
     } catch (error) {
       console.error('❌ Error sending login notification email:', error);

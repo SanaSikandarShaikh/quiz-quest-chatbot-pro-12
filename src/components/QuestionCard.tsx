@@ -109,7 +109,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
           <div className="flex items-center space-x-4">
             <div className="bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full font-bold flex items-center space-x-2">
               <Sparkles className="w-4 h-4" />
-              <span className="text-base">Question {questionNumber} of {totalQuestions}</span>
+              <span className="text-base">Question {questionNumber + 1} of {totalQuestions}</span>
             </div>
             <span className="bg-white/20 backdrop-blur-sm px-3 py-2 rounded-full text-sm font-medium">
               {question.domain}
