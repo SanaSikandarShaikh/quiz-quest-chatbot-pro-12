@@ -78,36 +78,36 @@ const LoginPage = ({ onLoginSuccess, onSwitchToRegister }: LoginPageProps) => {
         <div className="absolute bottom-32 left-1/3 w-2 h-2 bg-pink-400 rounded-full animate-bounce delay-1200"></div>
       </div>
 
-      <div className="max-w-md w-full space-y-8 relative z-10">
+      <div className="max-w-sm w-full space-y-6 relative z-10">
         {/* Logo and Header */}
         <div className="text-center">
-          <div className="mx-auto h-24 w-24 bg-gradient-to-br from-purple-600 to-blue-600 backdrop-blur-sm rounded-full flex items-center justify-center mb-6 border-2 border-purple-400/50 shadow-2xl">
-            <Shield className="h-12 w-12 text-white" />
+          <div className="mx-auto h-20 w-20 bg-gradient-to-br from-purple-600 to-blue-600 backdrop-blur-sm rounded-full flex items-center justify-center mb-5 border-2 border-purple-400/50 shadow-2xl">
+            <Shield className="h-10 w-10 text-white" />
           </div>
-          <h2 className="text-5xl font-extrabold bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent mb-4">
+          <h2 className="text-4xl font-extrabold bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent mb-3">
             Welcome Back
           </h2>
-          <p className="text-2xl text-purple-200 mb-4 font-semibold">
+          <p className="text-xl text-purple-200 mb-3 font-semibold">
             Sign in to your account
           </p>
-          <p className="text-purple-300 flex items-center justify-center gap-2 text-lg">
-            <Sparkles className="h-5 w-5 animate-pulse" />
+          <p className="text-purple-300 flex items-center justify-center gap-2 text-base">
+            <Sparkles className="h-4 w-4 animate-pulse" />
             Access your AI assessment dashboard
-            <Sparkles className="h-5 w-5 animate-pulse" />
+            <Sparkles className="h-4 w-4 animate-pulse" />
           </p>
         </div>
 
         {/* Login Form */}
-        <div className="bg-black/40 backdrop-blur-lg rounded-3xl shadow-2xl border-2 border-purple-500/30 p-8">
-          <form className="space-y-6" onSubmit={handleSubmit}>
-            <div className="space-y-5">
+        <div className="bg-black/40 backdrop-blur-lg rounded-2xl shadow-2xl border-2 border-purple-500/30 p-6">
+          <form className="space-y-5" onSubmit={handleSubmit}>
+            <div className="space-y-4">
               <div>
-                <label htmlFor="email" className="block text-sm font-bold text-purple-300 mb-3 uppercase tracking-wider">
+                <label htmlFor="email" className="block text-sm font-bold text-purple-300 mb-2 uppercase tracking-wider">
                   Email Address
                 </label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                    <Mail className="h-6 w-6 text-purple-400" />
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <Mail className="h-5 w-5 text-purple-400" />
                   </div>
                   <Input
                     id="email"
@@ -117,18 +117,18 @@ const LoginPage = ({ onLoginSuccess, onSwitchToRegister }: LoginPageProps) => {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="Enter your email address"
-                    className="pl-14 h-14 bg-gray-800/50 border-2 border-purple-500/30 text-white placeholder-purple-300/70 rounded-xl focus:ring-2 focus:ring-purple-400 focus:border-purple-400 text-lg font-medium"
+                    className="pl-11 h-12 bg-gray-800/50 border-2 border-purple-500/30 text-white placeholder-purple-300/70 rounded-lg focus:ring-2 focus:ring-purple-400 focus:border-purple-400 text-base font-medium"
                   />
                 </div>
               </div>
               
               <div>
-                <label htmlFor="password" className="block text-sm font-bold text-purple-300 mb-3 uppercase tracking-wider">
+                <label htmlFor="password" className="block text-sm font-bold text-purple-300 mb-2 uppercase tracking-wider">
                   Password
                 </label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                    <Lock className="h-6 w-6 text-purple-400" />
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <Lock className="h-5 w-5 text-purple-400" />
                   </div>
                   <Input
                     id="password"
@@ -138,17 +138,17 @@ const LoginPage = ({ onLoginSuccess, onSwitchToRegister }: LoginPageProps) => {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="Enter your password"
-                    className="pl-14 pr-14 h-14 bg-gray-800/50 border-2 border-purple-500/30 text-white placeholder-purple-300/70 rounded-xl focus:ring-2 focus:ring-purple-400 focus:border-purple-400 text-lg font-medium"
+                    className="pl-11 pr-11 h-12 bg-gray-800/50 border-2 border-purple-500/30 text-white placeholder-purple-300/70 rounded-lg focus:ring-2 focus:ring-purple-400 focus:border-purple-400 text-base font-medium"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute inset-y-0 right-0 pr-4 flex items-center"
+                    className="absolute inset-y-0 right-0 pr-3 flex items-center"
                   >
                     {showPassword ? (
-                      <EyeOff className="h-6 w-6 text-purple-400 hover:text-purple-300 transition-colors" />
+                      <EyeOff className="h-5 w-5 text-purple-400 hover:text-purple-300 transition-colors" />
                     ) : (
-                      <Eye className="h-6 w-6 text-purple-400 hover:text-purple-300 transition-colors" />
+                      <Eye className="h-5 w-5 text-purple-400 hover:text-purple-300 transition-colors" />
                     )}
                   </button>
                 </div>
@@ -156,26 +156,26 @@ const LoginPage = ({ onLoginSuccess, onSwitchToRegister }: LoginPageProps) => {
             </div>
 
             {error && (
-              <Alert className="bg-red-900/50 border-2 border-red-500/50 text-white rounded-xl">
-                <AlertDescription className="text-red-200 font-medium text-base">{error}</AlertDescription>
+              <Alert className="bg-red-900/50 border-2 border-red-500/50 text-white rounded-lg">
+                <AlertDescription className="text-red-200 font-medium text-sm">{error}</AlertDescription>
               </Alert>
             )}
 
-            <div className="space-y-5">
+            <div className="space-y-4">
               <Button
                 type="submit"
                 disabled={isLoading}
-                className="group relative w-full h-14 bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 hover:from-purple-700 hover:via-pink-700 hover:to-blue-700 text-white font-bold text-lg rounded-xl transition-all duration-300 transform hover:scale-105 shadow-2xl border-2 border-purple-400/50"
+                className="group relative w-full h-12 bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 hover:from-purple-700 hover:via-pink-700 hover:to-blue-700 text-white font-bold text-base rounded-lg transition-all duration-300 transform hover:scale-105 shadow-2xl border-2 border-purple-400/50"
               >
                 {isLoading ? (
-                  <div className="flex items-center gap-3">
-                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                    <span className="text-lg">Signing in...</span>
+                  <div className="flex items-center gap-2">
+                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                    <span>Signing in...</span>
                   </div>
                 ) : (
-                  <div className="flex items-center gap-3">
-                    <CheckCircle className="h-6 w-6" />
-                    <span className="text-lg">Sign In to Dashboard</span>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle className="h-5 w-5" />
+                    <span>Sign In to Dashboard</span>
                   </div>
                 )}
               </Button>
@@ -184,9 +184,9 @@ const LoginPage = ({ onLoginSuccess, onSwitchToRegister }: LoginPageProps) => {
                 <button
                   type="button"
                   onClick={onSwitchToRegister}
-                  className="text-purple-300 hover:text-purple-200 text-base font-bold transition-colors duration-200 flex items-center gap-3 mx-auto group"
+                  className="text-purple-300 hover:text-purple-200 text-sm font-bold transition-colors duration-200 flex items-center gap-2 mx-auto group"
                 >
-                  <User className="h-5 w-5 group-hover:scale-110 transition-transform" />
+                  <User className="h-4 w-4 group-hover:scale-110 transition-transform" />
                   <span>Don't have an account? Register here</span>
                 </button>
               </div>
@@ -194,21 +194,21 @@ const LoginPage = ({ onLoginSuccess, onSwitchToRegister }: LoginPageProps) => {
           </form>
 
           {/* Features */}
-          <div className="mt-8 pt-6 border-t-2 border-purple-500/30">
-            <p className="text-purple-200 text-sm text-center mb-6 font-bold uppercase tracking-wider">
+          <div className="mt-6 pt-4 border-t-2 border-purple-500/30">
+            <p className="text-purple-200 text-xs text-center mb-4 font-bold uppercase tracking-wider">
               What you'll get access to:
             </p>
-            <div className="grid grid-cols-1 gap-4 text-sm">
-              <div className="flex items-center gap-3 text-purple-200 bg-green-900/20 p-3 rounded-lg border border-green-500/30">
-                <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
+            <div className="grid grid-cols-1 gap-3 text-xs">
+              <div className="flex items-center gap-2 text-purple-200 bg-green-900/20 p-2 rounded border border-green-500/30">
+                <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
                 <span className="font-medium">AI-powered interview assessments</span>
               </div>
-              <div className="flex items-center gap-3 text-purple-200 bg-blue-900/20 p-3 rounded-lg border border-blue-500/30">
-                <div className="w-3 h-3 bg-blue-400 rounded-full animate-pulse"></div>
+              <div className="flex items-center gap-2 text-purple-200 bg-blue-900/20 p-2 rounded border border-blue-500/30">
+                <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></div>
                 <span className="font-medium">Multiple domains & difficulty levels</span>
               </div>
-              <div className="flex items-center gap-3 text-purple-200 bg-pink-900/20 p-3 rounded-lg border border-pink-500/30">
-                <div className="w-3 h-3 bg-pink-400 rounded-full animate-pulse"></div>
+              <div className="flex items-center gap-2 text-purple-200 bg-pink-900/20 p-2 rounded border border-pink-500/30">
+                <div className="w-2 h-2 bg-pink-400 rounded-full animate-pulse"></div>
                 <span className="font-medium">Detailed performance analytics</span>
               </div>
             </div>
