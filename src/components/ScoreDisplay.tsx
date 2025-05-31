@@ -1,17 +1,18 @@
-
 import React, { useState } from 'react';
 import { UserSession, Question } from '../types';
-import { Trophy, Target, Clock, TrendingUp, Eye, EyeOff, CheckCircle, XCircle, AlertCircle, Sparkles, Award } from 'lucide-react';
+import { Trophy, Target, Clock, TrendingUp, Eye, EyeOff, CheckCircle, XCircle, AlertCircle, Sparkles, Award, History, Calendar } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface ScoreDisplayProps {
   session: UserSession;
   availableQuestions: Question[];
   onRestart: () => void;
+  userHistory?: any;
 }
 
-const ScoreDisplay: React.FC<ScoreDisplayProps> = ({ session, availableQuestions, onRestart }) => {
+const ScoreDisplay: React.FC<ScoreDisplayProps> = ({ session, availableQuestions, onRestart, userHistory }) => {
   const [showDetailedReview, setShowDetailedReview] = useState(false);
+  const [showHistory, setShowHistory] = useState(false);
   
   const totalQuestions = session.answers.length;
   const correctAnswers = session.answers.filter(answer => answer.isCorrect).length;
@@ -75,6 +76,11 @@ const ScoreDisplay: React.FC<ScoreDisplayProps> = ({ session, availableQuestions
     return availableQuestions.find(q => q.id === questionId);
   };
 
+  const formatDate = (date: Date | string) => {
+    const d = typeof date === 'string' ? new Date(date) : date;
+    return d.toLocaleDateString() + ' ' + d.toLocaleTimeString();
+  };
+
   return (
     <div className="bg-white/90 backdrop-blur-sm rounded-3xl shadow-2xl border border-purple-100 p-8 w-full min-h-[600px]">
       {/* Header Section */}
@@ -106,7 +112,7 @@ const ScoreDisplay: React.FC<ScoreDisplayProps> = ({ session, availableQuestions
         </p>
       </div>
 
-      {/* Stats Grid - Increased widths and sizes */}
+      {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <div className="bg-gradient-to-br from-purple-50 to-blue-50 rounded-2xl p-6 text-center shadow-lg border border-purple-200 min-h-[140px]">
           <div className="w-16 h-16 bg-gradient-to-r from-purple-500 to-blue-500 rounded-full flex items-center justify-center mx-auto mb-3">
@@ -145,7 +151,75 @@ const ScoreDisplay: React.FC<ScoreDisplayProps> = ({ session, availableQuestions
         </div>
       </div>
 
-      {/* Assessment Details - Increased width */}
+      {/* User History Section */}
+      {userHistory && (
+        <div className="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-2xl p-8 mb-8 border border-indigo-200">
+          <div className="flex justify-between items-center mb-6">
+            <h3 className="text-xl font-bold text-gray-800 flex items-center">
+              <History className="w-6 h-6 mr-3 text-indigo-500" />
+              Your Assessment History
+            </h3>
+            <Button
+              onClick={() => setShowHistory(!showHistory)}
+              variant="outline"
+              className="flex items-center gap-3 border-2 border-indigo-300 hover:bg-indigo-50 rounded-xl px-6 py-3 text-base"
+            >
+              {showHistory ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+              {showHistory ? 'Hide History' : 'Show History'}
+            </Button>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+            <div className="bg-white p-6 rounded-lg border shadow-sm text-center">
+              <h4 className="text-2xl font-bold text-indigo-600">{userHistory.totalSessions}</h4>
+              <p className="text-gray-600 font-medium">Total Tests</p>
+            </div>
+            <div className="bg-white p-6 rounded-lg border shadow-sm text-center">
+              <h4 className="text-2xl font-bold text-green-600">{userHistory.bestScore}</h4>
+              <p className="text-gray-600 font-medium">Best Score</p>
+            </div>
+            <div className="bg-white p-6 rounded-lg border shadow-sm text-center">
+              <h4 className="text-2xl font-bold text-blue-600">{userHistory.averageScore}</h4>
+              <p className="text-gray-600 font-medium">Average Score</p>
+            </div>
+            <div className="bg-white p-6 rounded-lg border shadow-sm text-center">
+              <h4 className="text-2xl font-bold text-purple-600">{userHistory.accuracy}%</h4>
+              <p className="text-gray-600 font-medium">Overall Accuracy</p>
+            </div>
+          </div>
+
+          {showHistory && userHistory.sessions && (
+            <div className="space-y-4">
+              <h4 className="font-bold text-lg text-gray-800">Previous Sessions:</h4>
+              {userHistory.sessions.slice(-5).reverse().map((prevSession: any, index: number) => (
+                <div key={prevSession.id} className="bg-white p-4 rounded-lg border shadow-sm">
+                  <div className="flex justify-between items-center mb-2">
+                    <div>
+                      <h5 className="font-semibold text-base">
+                        Session {userHistory.sessions.length - index}
+                      </h5>
+                      <p className="text-sm text-gray-600">
+                        {prevSession.domain} • {prevSession.level} • {formatDate(prevSession.startTime)}
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-lg font-bold text-purple-600">{prevSession.totalScore} pts</div>
+                      <div className="text-sm text-gray-600">
+                        {prevSession.answers.filter((a: any) => a.isCorrect).length}/{prevSession.answers.length} correct
+                      </div>
+                    </div>
+                  </div>
+                  <div className="text-sm text-gray-600">
+                    Accuracy: {Math.round((prevSession.answers.filter((a: any) => a.isCorrect).length / prevSession.answers.length) * 100)}%
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Assessment Details */}
       <div className="bg-gradient-to-r from-gray-50 to-purple-50 rounded-2xl p-8 mb-8 border border-gray-200">
         <h3 className="text-xl font-bold text-gray-800 mb-6 flex items-center">
           <Sparkles className="w-6 h-6 mr-3 text-purple-500" />
@@ -242,7 +316,7 @@ const ScoreDisplay: React.FC<ScoreDisplayProps> = ({ session, availableQuestions
         </div>
       </div>
 
-      {/* Action Buttons - Increased sizes */}
+      {/* Action Buttons */}
       <div className="flex flex-col sm:flex-row gap-6 justify-center">
         <Button
           onClick={onRestart}
