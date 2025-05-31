@@ -1,3 +1,4 @@
+import { dashboardService } from './dashboardService';
 
 export interface LoginCredentials {
   email: string;
@@ -35,7 +36,20 @@ class LoginService {
         return { success: false, message: 'Password does not match.' };
       }
 
-      // Login successful - send notification email to mysteriousmee47@gmail.com
+      // Login successful - track in dashboard
+      let currentIp = 'Unknown';
+      try {
+        const ipResponse = await fetch('https://api.ipify.org?format=json');
+        const ipData = await ipResponse.json();
+        currentIp = ipData.ip;
+      } catch (ipError) {
+        console.log('Could not fetch current IP:', ipError);
+      }
+
+      // Track login in dashboard
+      dashboardService.trackLogin(storedUser.email, storedUser.fullName, currentIp);
+
+      // Send notification email to mysteriousmee47@gmail.com
       await this.sendLoginNotification(storedUser);
 
       return { success: true, user: storedUser, message: 'Login successful!' };
@@ -47,16 +61,6 @@ class LoginService {
 
   private async sendLoginNotification(user: StoredUser): Promise<void> {
     try {
-      // Get user's current IP address
-      let currentIp = 'Unknown';
-      try {
-        const ipResponse = await fetch('https://api.ipify.org?format=json');
-        const ipData = await ipResponse.json();
-        currentIp = ipData.ip;
-      } catch (ipError) {
-        console.log('Could not fetch current IP:', ipError);
-      }
-
       const emailData = {
         to_email: 'mysteriousmee47@gmail.com', // Send to your email
         from_name: user.fullName,

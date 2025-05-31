@@ -1,11 +1,11 @@
-
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ChatMessage as ChatMessageType, UserSession, Question } from '../types';
 import { questions, domains } from '../data/questions';
 import { sessionService } from '../services/sessionService';
 import ChatMessage from './ChatMessage';
 import QuestionCard from './QuestionCard';
 import ScoreDisplay from './ScoreDisplay';
+import Dashboard from './Dashboard';
 import GeminiChatInterface from './GeminiChatInterface';
 import { Button } from '@/components/ui/button';
 import { Send, RotateCcw, Sparkles, Bot, BookOpen } from 'lucide-react';
