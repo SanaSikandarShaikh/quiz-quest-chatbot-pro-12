@@ -23,15 +23,25 @@ const Index = () => {
         setIsLoggedIn(true);
       }
     }
+
+    // Ensure persistent data is maintained across sessions
+    const userData = persistenceService.getAllUsers();
+    const loginHistory = persistenceService.getLoginHistory();
+    const sessions = persistenceService.getSessions();
+    
+    // Log data availability for debugging
+    console.log('📊 Persistent data loaded:', {
+      users: userData.length,
+      loginHistory: loginHistory.length,
+      sessions: sessions.length
+    });
   }, []);
 
   const handleRegistrationSuccess = () => {
-    // Get the newly registered user from localStorage
     const registeredUser = localStorage.getItem('registeredUser');
     if (registeredUser) {
       const userData = JSON.parse(registeredUser);
       
-      // Save to persistent database
       const userRecord = {
         id: `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
         fullName: userData.fullName,
@@ -49,6 +59,7 @@ const Index = () => {
       };
       
       persistenceService.saveUser(userRecord);
+      console.log('✅ User data saved to persistent storage');
     }
     
     setIsRegistered(true);
@@ -57,11 +68,20 @@ const Index = () => {
 
   const handleLoginSuccess = () => {
     setIsLoggedIn(true);
-    // Store login session
-    sessionStorage.setItem('loginSession', JSON.stringify({
+    const loginData = {
       timestamp: new Date().toISOString(),
       email: JSON.parse(localStorage.getItem('registeredUser') || '{}').email
-    }));
+    };
+    
+    sessionStorage.setItem('loginSession', JSON.stringify(loginData));
+    
+    // Update last login date in persistent storage
+    const user = persistenceService.getUserByEmail(loginData.email);
+    if (user) {
+      user.lastLoginDate = loginData.timestamp;
+      persistenceService.saveUser(user);
+      console.log('✅ Login timestamp updated in persistent storage');
+    }
   };
 
   const handleLogout = () => {
@@ -87,16 +107,16 @@ const Index = () => {
   if (showAdminDashboard) {
     return (
       <div className="min-h-screen">
-        <div className="absolute top-4 left-4 z-10 flex gap-2">
+        <div className="absolute top-4 left-4 z-10 flex gap-3">
           <button
             onClick={toggleAdminDashboard}
-            className="px-4 py-2 text-sm bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+            className="px-4 py-2 text-sm bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors shadow-lg"
           >
             ← Back to Assessment
           </button>
           <button
             onClick={handleLogout}
-            className="px-4 py-2 text-sm bg-red-500 text-white rounded hover:bg-red-600 transition-colors"
+            className="px-4 py-2 text-sm bg-red-500 text-white rounded hover:bg-red-600 transition-colors shadow-lg"
           >
             Logout
           </button>
@@ -123,16 +143,16 @@ const Index = () => {
   // If both registered and logged in, show main interface
   return (
     <div className="relative">
-      <div className="absolute top-4 right-4 z-10 flex gap-2">
+      <div className="absolute top-4 right-4 z-10 flex gap-3">
         <button
           onClick={toggleAdminDashboard}
-          className="px-4 py-2 text-sm bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+          className="px-4 py-2 text-sm bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors shadow-lg"
         >
           👨‍💼 Admin Dashboard
         </button>
         <button
           onClick={handleLogout}
-          className="px-4 py-2 text-sm bg-red-500 text-white rounded hover:bg-red-600 transition-colors"
+          className="px-4 py-2 text-sm bg-red-500 text-white rounded hover:bg-red-600 transition-colors shadow-lg"
         >
           Logout
         </button>

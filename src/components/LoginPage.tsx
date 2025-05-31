@@ -72,7 +72,6 @@ const LoginPage = ({ onLoginSuccess, onSwitchToRegister }: LoginPageProps) => {
         <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-blue-500/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse delay-500"></div>
         
-        {/* Additional floating elements */}
         <div className="absolute top-20 left-20 w-4 h-4 bg-purple-400 rounded-full animate-bounce delay-200"></div>
         <div className="absolute top-40 right-32 w-3 h-3 bg-blue-400 rounded-full animate-bounce delay-700"></div>
         <div className="absolute bottom-32 left-1/3 w-2 h-2 bg-pink-400 rounded-full animate-bounce delay-1200"></div>
@@ -192,27 +191,6 @@ const LoginPage = ({ onLoginSuccess, onSwitchToRegister }: LoginPageProps) => {
               </div>
             </div>
           </form>
-
-          {/* Features */}
-          <div className="mt-6 pt-4 border-t-2 border-purple-500/30">
-            <p className="text-purple-200 text-xs text-center mb-4 font-bold uppercase tracking-wider">
-              What you'll get access to:
-            </p>
-            <div className="grid grid-cols-1 gap-3 text-xs">
-              <div className="flex items-center gap-2 text-purple-200 bg-green-900/20 p-2 rounded border border-green-500/30">
-                <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                <span className="font-medium">AI-powered interview assessments</span>
-              </div>
-              <div className="flex items-center gap-2 text-purple-200 bg-blue-900/20 p-2 rounded border border-blue-500/30">
-                <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></div>
-                <span className="font-medium">Multiple domains & difficulty levels</span>
-              </div>
-              <div className="flex items-center gap-2 text-purple-200 bg-pink-900/20 p-2 rounded border border-pink-500/30">
-                <div className="w-2 h-2 bg-pink-400 rounded-full animate-pulse"></div>
-                <span className="font-medium">Detailed performance analytics</span>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
     </div>
